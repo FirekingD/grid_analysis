@@ -6,7 +6,9 @@ library(factoextra)
 #install.packages("geojsonsf")
 #install.packages("sf")
 #install.packages("readxl")
-install.packages("xlsx")
+#install.packages("xlsx")
+install.packages("mapview")
+library(mapview)
 library(xlsx)
 
 library(geojsonsf)
@@ -25,3 +27,11 @@ iris_paris_joined_conso2018<-filter(iris_paris_joined_conso,Année=="2018")
 iris_paris_joined_conso2019<-filter(iris_paris_joined_conso,Année=="2019")
 iris_paris_joined_conso2020<-filter(iris_paris_joined_conso,Année=="2020")
 ggplot(iris_paris_joined_conso2018,aes(x = geometry,y=Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))+geom_tile()
+mapview(iris_paris_joined_conso2018) + mapview(iris_paris_joined_conso2018$Consommation.annuelle.moyenne.de.la.commune..MWh.)
+gradient_color <- colorRampPalette(c("blue", "red"))
+plot(iris_paris_joined_conso2018["Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh."],
+     main="Consommation.annuelle.moyenne.",
+     key.pos=4, col=gradient_color(20), legend=TRUE)
+
+ggplot(head(iris_paris_joined_conso2018,100)) +
+  geom_sf(aes(fill = Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))
