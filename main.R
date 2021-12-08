@@ -21,9 +21,23 @@ iris_paris<-st_read(dsn="data",layer="iris_paris")
 #plot(iris_paris)
 iris_paris_joined_conso<-merge(iris_paris,conso_elec,by.x="CODE_IRIS",by.y="Code.IRIS",type="full")
 #plot(iris_paris_joined_conso$geometry)
-iris_paris_joined_conso2018<-filter(iris_paris_joined_conso,Année=="2018")
-iris_paris_joined_conso2019<-filter(iris_paris_joined_conso,Année=="2019")
-iris_paris_joined_conso2020<-filter(iris_paris_joined_conso,Année=="2020")
+c2018=filter(iris_paris_joined_conso,Année=="2018")
+c2018$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.= as.numeric(sub(",",".",c2018$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.,fixed=TRUE))
+c2018_agr=aggregate(c2018$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh., list(c2018$CODE_IRIS), sum)
+names(c2018_agr)[1] <- "code_iris" ;names(c2018_agr)[2] <- "conso_annuelle_totale_iris" 
+
+c2019=filter(iris_paris_joined_conso,Année=="2019")
+c2019$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.= as.numeric(sub(",",".",c2019$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.,fixed=TRUE))
+c2019_agr=aggregate(c2019$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh., list(c2019$CODE_IRIS), sum)
+names(c2019_agr)[1] <- "code_iris" ;names(c2019_agr)[2] <- "conso_annuelle_totale_iris" 
+
+c2020=filter(iris_paris_joined_conso,Année=="2020")
+c2020$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.= as.numeric(sub(",",".",c2020$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.,fixed=TRUE))
+c2020_agr=aggregate(c2020$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh., list(c2020$CODE_IRIS), sum)
+names(c2020_agr)[1] <- "code_iris" ;names(c2020_agr)[2] <- "conso_annuelle_totale_iris" 
+
+
 #ggplot()+geom_polygon(data=iris_paris_joined_conso2018,aes(long,lat,fill=Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))
 ggplot() +
-  geom_sf(data = iris_paris_joined_conso2018, aes(fill =mean(Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.) )) 
+  geom_sf(data = iris_paris_joined_conso2018, aes(fill = )) 
+
