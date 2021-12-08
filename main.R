@@ -6,8 +6,8 @@ library(factoextra)
 #install.packages("geojsonsf")
 #install.packages("sf")
 #install.packages("readxl")
-install.packages("xlsx")
-library(xlsx)
+#install.packages("xlsx")
+#library(xlsx)
 
 library(geojsonsf)
 library(sf)
@@ -24,4 +24,6 @@ iris_paris_joined_conso<-merge(iris_paris,conso_elec,by.x="CODE_IRIS",by.y="Code
 iris_paris_joined_conso2018<-filter(iris_paris_joined_conso,Année=="2018")
 iris_paris_joined_conso2019<-filter(iris_paris_joined_conso,Année=="2019")
 iris_paris_joined_conso2020<-filter(iris_paris_joined_conso,Année=="2020")
-ggplot(iris_paris_joined_conso2018,aes(x = geometry,y=Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))+geom_tile()
+#ggplot()+geom_polygon(data=iris_paris_joined_conso2018,aes(long,lat,fill=Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))
+ggplot() +
+  geom_sf(data = iris_paris_joined_conso2018, aes(fill =mean(Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.) )) 
