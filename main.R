@@ -10,6 +10,7 @@ library(factoextra)
 install.packages("mapview")
 library(mapview)
 library(xlsx)
+#library(xlsx)
 
 library(geojsonsf)
 library(sf)
@@ -22,10 +23,11 @@ prod_elec<- read.csv("./data/production-electrique-par-filiere-a-la-maille-regio
 iris_paris<-st_read(dsn="data",layer="iris_paris")
 #plot(iris_paris)
 iris_paris_joined_conso<-merge(iris_paris,conso_elec,by.x="CODE_IRIS",by.y="Code.IRIS",type="full")
+iden<-c("Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.","Consommation.annuelle.totale.de.l.adresse..MWh.","Nombre.de.logements")
 #plot(iris_paris_joined_conso$geometry)
-iris_paris_joined_conso2018<-filter(iris_paris_joined_conso,Année=="2018")
-iris_paris_joined_conso2019<-filter(iris_paris_joined_conso,Année=="2019")
-iris_paris_joined_conso2020<-filter(iris_paris_joined_conso,Année=="2020")
+iris_paris_joined_conso2018<-filter(iris_paris_joined_conso,Annï¿½e=="2018")
+iris_paris_joined_conso2019<-filter(iris_paris_joined_conso,Annï¿½e=="2019")
+iris_paris_joined_conso2020<-filter(iris_paris_joined_conso,Annï¿½e=="2020")
 ggplot(iris_paris_joined_conso2018,aes(x = geometry,y=Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))+geom_tile()
 mapview(iris_paris_joined_conso2018) + mapview(iris_paris_joined_conso2018$Consommation.annuelle.moyenne.de.la.commune..MWh.)
 gradient_color <- colorRampPalette(c("blue", "red"))
@@ -35,3 +37,29 @@ plot(iris_paris_joined_conso2018["Consommation.annuelle.moyenne.par.logement.de.
 
 ggplot(head(iris_paris_joined_conso2018,100)) +
   geom_sf(aes(fill = Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))
+c2018=filter(iris_paris_joined_conso,Annï¿½e=="2018")
+c2018$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.= as.numeric(sub(",",".",c2018$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.,fixed=TRUE))
+c2018$Consommation.annuelle.totale.de.l.adresse..MWh.= as.numeric(sub(",",".",c2018$Consommation.annuelle.totale.de.l.adresse..MWh.,fixed=TRUE))
+
+c2018_agr=aggregate(c2018[iden], list(c2018$CODE_IRIS), sum)
+names(c2018_agr)[1] <- "code_iris" ;names(c2018_agr)[2] <- "sum_conso_annuelle_moyenne_iris" ; names(c2018_agr)[3]<-"sum_conso_annuelle_totale_iris";names(c2018_agr)[4]<-"nb_logements_totale_iris"
+
+c2019=filter(iris_paris_joined_conso,Annï¿½e=="2019")
+c2019$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.= as.numeric(sub(",",".",c2019$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.,fixed=TRUE))
+c2019$Consommation.annuelle.totale.de.l.adresse..MWh.= as.numeric(sub(",",".",c2019$Consommation.annuelle.totale.de.l.adresse..MWh.,fixed=TRUE))
+
+c2019_agr=aggregate(c2019[iden], list(c2019$CODE_IRIS), sum)
+names(c2019_agr)[1] <- "code_iris" ;names(c2019_agr)[2] <- "sum_conso_annuelle_moyenne_iris" ;names(c2019_agr)[3]<-"sum_conso_annuelle_totale_iris"; names(c2019_agr)[4]<-"nb_logements_totale_iris"
+
+c2020=filter(iris_paris_joined_conso,Annï¿½e=="2020")
+c2020$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.= as.numeric(sub(",",".",c2020$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.,fixed=TRUE))
+c2020$Consommation.annuelle.totale.de.l.adresse..MWh.= as.numeric(sub(",",".",c2020$Consommation.annuelle.totale.de.l.adresse..MWh.,fixed=TRUE))
+
+c2020_agr=aggregate(c2020[iden], list(c2020$CODE_IRIS), sum)
+names(c2020_agr)[1] <- "code_iris" ;names(c2020_agr)[2] <- "sum_conso_annuelle_moyenne_iris" ;names(c2020_agr)[3]<-"sum_conso_annuelle_totale_iris"; names(c2020_agr)[4]<-"nb_logements_totale_iris"
+
+
+#ggplot()+geom_polygon(data=iris_paris_joined_conso2018,aes(long,lat,fill=Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))
+ggplot() +
+  geom_sf(data = iris_paris_joined_conso2018, aes(fill = )) 
+
