@@ -92,18 +92,24 @@ df_24$sum_conso_annuelle_totale_iris<-rep(-1,nrow(df_24))
 df_25<-subset(c2020_agr,select = !(names(c2020_agr) %in% drops));df_25$annee<-rep(2025,nrow(df_25))
 df_25$sum_conso_annuelle_totale_iris<-rep(-1,nrow(df_25))
 df_result<-rbind(df_21,df_22,df_23,df_24,df_25)
-svmodel1 <- svm(sum_conso_annuelle_totale_iris ~ annee+nb_logements_totale_iris ,data=conso_regrouped, type="eps-regression",kernel="radial",cost=10000, gamma=10)
+svmodel1 <- svm(sum_conso_annuelle_totale_iris ~ annee+nb_logements_totale_iris ,data=conso_regrouped, type="eps-regression",kernel="radial",cost=100, gamma=1)
 intervalle_t<- 2018:2025
-pred1<- predict(svmodel1,newdata=data.frame(annee=intervalle_t))
+pred1<- predict(svmodel1,newdata=df_result)
+df_21$sum_conso_annuelle_totale_iris<-pred1[1:933]
+df_22$sum_conso_annuelle_totale_iris<-pred1[1:933]
+df_23$sum_conso_annuelle_totale_iris<-pred1[1:933]
+df_24$sum_conso_annuelle_totale_iris<-pred1[1:933]
+df_25$sum_conso_annuelle_totale_iris<-pred1[1:933]
 
+ggplot() +labs(title="Consommation électrique totale de Paris en 2024 par iris (MWh)")+
+  geom_sf(data = df_24, aes(fill = sum_conso_annuelle_totale_iris )) +scale_fill_gradient(low="blue", high="red")
 
 gammas = 2^(-8:3)
 costs = 2^(-5:8)
 epsilons = c(0.1, 0.01, 0.001)
 # start training via gridsearch
 svmgs <- tune(svm,
-              train.x = conso_regrouped$annee,
-              train.y = conso_regrouped$sum_conso_annuelle_totale_iris,
+              sum_conso_annuelle_totale_iris ~ annee+nb_logements_totale_iris ,data=conso_regrouped,
               type = "eps-regression",
               kernel = "radial", 
               scale = TRUE,
