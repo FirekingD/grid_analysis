@@ -117,6 +117,8 @@ df_23$sum_conso_annuelle_totale_iris<-predi_final[1867:2799]
 df_24$sum_conso_annuelle_totale_iris<-predi_final[2800:3732]
 df_25$sum_conso_annuelle_totale_iris<-predi_final[3733:4665]
 
+save(svrmodel, file = "svrmodel.RData")
+#load("svrmodel.RData")
 
 #Plot
 ggplot() +labs(title="Consommation électrique totale de Paris en 2021 par iris (MWh)")+
