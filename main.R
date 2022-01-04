@@ -8,6 +8,7 @@ library(factoextra)
 #install.packages("sf")
 #install.packages("readxl")
 #install.packages("xlsx")
+#install.packages("e1071")
 #library(xlsx)
 
 library(geojsonsf)
@@ -15,6 +16,8 @@ library(sf)
 library(lattice)
 library(GGally)
 library(readxl)
+library(e1071)
+
 
 setwd("D:/dem/grid_analysis") #configuration du répertoire du travail
 # Chargement des données #
@@ -72,4 +75,23 @@ c2020_agr$annee<-rep(2020,nrow(c2020_agr))
 conso_regrouped<-rbind(c2018_agr,c2019_agr,c2020_agr)
 
 # Modelling and prediction # 
+# Définition et Entrainement du modèle SVM
+svmodel1 <- svm(sum_conso_annuelle_totale_iris ~ annee + nb_logements_totale_iris,data=conso_regrouped, type="eps-regression",kernel="radial",cost=10000, gamma=10)
 
+
+gammas = 2^(-8:3)
+costs = 2^(-5:8)
+epsilons = c(0.1, 0.01, 0.001)
+# start training via gridsearch
+svmgs <- tune(svm,
+              train.x = conso_regrouped$annee,
+              train.y = conso_regrouped$sum_conso_annuelle_totale_iris,
+              type = "eps-regression",
+              kernel = "radial", 
+              scale = TRUE,
+              ranges = list(gamma = gammas, cost = costs, epsolon = epsilons),
+              tunecontrol = tune.control(cross = 5)
+)
+
+# pick best model
+svrmodel <- svmgs$best.model
