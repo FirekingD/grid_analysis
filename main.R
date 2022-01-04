@@ -92,21 +92,11 @@ df_24$sum_conso_annuelle_totale_iris<-rep(-1,nrow(df_24))
 df_25<-subset(c2020_agr,select = !(names(c2020_agr) %in% drops));df_25$annee<-rep(2025,nrow(df_25))
 df_25$sum_conso_annuelle_totale_iris<-rep(-1,nrow(df_25))
 df_result<-rbind(df_21,df_22,df_23,df_24,df_25)
-svmodel1 <- svm(sum_conso_annuelle_totale_iris ~ annee+nb_logements_totale_iris ,data=conso_regrouped, type="eps-regression",kernel="radial",cost=100, gamma=1)
-intervalle_t<- 2018:2025
-pred1<- predict(svmodel1,newdata=df_result)
-df_21$sum_conso_annuelle_totale_iris<-pred1[1:933]
-df_22$sum_conso_annuelle_totale_iris<-pred1[1:933]
-df_23$sum_conso_annuelle_totale_iris<-pred1[1:933]
-df_24$sum_conso_annuelle_totale_iris<-pred1[1:933]
-df_25$sum_conso_annuelle_totale_iris<-pred1[1:933]
 
-ggplot() +labs(title="Consommation électrique totale de Paris en 2024 par iris (MWh)")+
-  geom_sf(data = df_24, aes(fill = sum_conso_annuelle_totale_iris )) +scale_fill_gradient(low="blue", high="red")
 
-gammas = 2^(-8:3)
-costs = 2^(-5:8)
-epsilons = c(0.1, 0.01, 0.001)
+gammas = c(0.1,1)#2^(-8:3)
+costs = c(100,500)#2^(1,4)#:8)
+epsilons = c(0.1,1)# 0.01, 0.001)
 # start training via gridsearch
 svmgs <- tune(svm,
               sum_conso_annuelle_totale_iris ~ annee+nb_logements_totale_iris ,data=conso_regrouped,
@@ -119,3 +109,22 @@ svmgs <- tune(svm,
 
 # pick best model
 svrmodel <- svmgs$best.model
+predi_final<-predict(svrmodel,newdata=df_result)
+
+df_21$sum_conso_annuelle_totale_iris<-predi_final[1:933]
+df_22$sum_conso_annuelle_totale_iris<-predi_final[934:1866]
+df_23$sum_conso_annuelle_totale_iris<-predi_final[1867:2799]
+df_24$sum_conso_annuelle_totale_iris<-predi_final[2800:3732]
+df_25$sum_conso_annuelle_totale_iris<-predi_final[3733:4665]
+
+
+#Plot
+ggplot() +labs(title="Consommation électrique totale de Paris en 2021 par iris (MWh)")+
+  geom_sf(data = df_21, aes(fill = sum_conso_annuelle_totale_iris )) +scale_fill_gradient(low="blue", high="red")
+
+ggplot() +labs(title="Consommation électrique totale de Paris en 2023 par iris (MWh)")+
+  geom_sf(data = df_23, aes(fill = sum_conso_annuelle_totale_iris )) +scale_fill_gradient(low="blue", high="red")
+
+
+ggplot() +labs(title="Consommation électrique totale de Paris en 2025 par iris (MWh)")+
+  geom_sf(data = df_25, aes(fill = sum_conso_annuelle_totale_iris )) +scale_fill_gradient(low="blue", high="red")
