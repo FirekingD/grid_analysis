@@ -43,15 +43,14 @@ c2020$Consommation.annuelle.totale.de.l.adresse..MWh.= as.numeric(sub(",",".",c2
 c2020_agr=aggregate(c2020[iden], list(c2020$CODE_IRIS), sum)
 names(c2020_agr)[1] <- "code_iris" ;names(c2020_agr)[2] <- "sum_conso_annuelle_moyenne_iris" ;names(c2020_agr)[3]<-"sum_conso_annuelle_totale_iris"; names(c2020_agr)[4]<-"nb_logements_totale_iris"
 
-#Correlation de Spearman
+#Tests de Correlation de Spearman
 cor.test(c2018_agr$sum_conso_annuelle_totale_iris,c2018_agr$nb_logements_totale_iris)#
 cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2019_agr$nb_logements_totale_iris)# Conso electrique % nb de logements (qui est proportionnelle au nombre d'habitant)
 cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2020_agr$nb_logements_totale_iris)#
 
-cor.test(c2018_agr$sum_conso_annuelle_moyenne_iris,c2018_agr$nb_logements_totale_iris)#
+# Test de corrélation de la conso électrique entre deux années successives 
+cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2018_agr$sum_conso_annuelle_totale_iris)
+cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2019_agr$sum_conso_annuelle_totale_iris)
 
 
-#ggplot()+geom_polygon(data=iris_paris_joined_conso2018,aes(long,lat,fill=Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))
-ggplot() +
-  geom_sf(data = iris_paris_joined_conso2018, aes(fill = )) 
 
