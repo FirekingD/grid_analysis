@@ -19,7 +19,7 @@ library(readxl)
 library(e1071)
 
 
-setwd("D:/dem/grid_analysis") #configuration du répertoire du travail
+setwd("C:\Users\victo\Desktop\geostat\grid_analysis") #configuration du répertoire du travail
 # Chargement des données #
 conso_elec<- read.csv("./data/consommation_annuelle_residentielle_adresse_paris.csv",sep=";")
 prod_elec<- read.csv("./data/production-electrique-par-filiere-a-la-maille-region.csv", sep=";")
@@ -64,6 +64,8 @@ cor.test(c2018_agr$sum_conso_annuelle_totale_iris,c2018_agr$nb_logements_totale_
 cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2019_agr$nb_logements_totale_iris)# Conso electrique % nb de logements (qui est proportionnelle au nombre d'habitant)
 cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2020_agr$nb_logements_totale_iris)#
 
+cor.test(c2018_agr$sum_conso_annuelle_moyenne_iris,c2018_agr$nb_logements_totale_iris)
+
 # Test de corrélation de la conso électrique entre deux années successives #
 cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2018_agr$sum_conso_annuelle_totale_iris)
 cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2019_agr$sum_conso_annuelle_totale_iris)
@@ -76,7 +78,23 @@ conso_regrouped<-rbind(c2018_agr,c2019_agr,c2020_agr)
 
 # Modelling and prediction # 
 # Définition et Entrainement du modèle SVM
-svmodel1 <- svm(sum_conso_annuelle_totale_iris ~ annee + nb_logements_totale_iris,data=conso_regrouped, type="eps-regression",kernel="radial",cost=10000, gamma=10)
+
+drops <- c("sum_conso_annuelle_moyenne_iris","geometry")
+df<- subset(conso_regrouped,select = !(names(conso_regrouped) %in% drops))
+df_21<-subset(c2020_agr,select = !(names(c2020_agr) %in% drops));df_21$annee<-rep(2021,nrow(df_21))
+df_21$sum_conso_annuelle_totale_iris<-rep(-1,nrow(df_21))
+df_22<-subset(c2020_agr,select = !(names(c2020_agr) %in% drops));df_22$annee<-rep(2022,nrow(df_22))
+df_22$sum_conso_annuelle_totale_iris<-rep(-1,nrow(df_22))
+df_23<-subset(c2020_agr,select = !(names(c2020_agr) %in% drops));df_23$annee<-rep(2023,nrow(df_23))
+df_23$sum_conso_annuelle_totale_iris<-rep(-1,nrow(df_23))
+df_24<-subset(c2020_agr,select = !(names(c2020_agr) %in% drops));df_24$annee<-rep(2024,nrow(df_24))
+df_24$sum_conso_annuelle_totale_iris<-rep(-1,nrow(df_24))
+df_25<-subset(c2020_agr,select = !(names(c2020_agr) %in% drops));df_25$annee<-rep(2025,nrow(df_25))
+df_25$sum_conso_annuelle_totale_iris<-rep(-1,nrow(df_25))
+df_result<-rbind(df_21,df_22,df_23,df_24,df_25)
+svmodel1 <- svm(sum_conso_annuelle_totale_iris ~ annee+nb_logements_totale_iris ,data=conso_regrouped, type="eps-regression",kernel="radial",cost=10000, gamma=10)
+intervalle_t<- 2018:2025
+pred1<- predict(svmodel1,newdata=data.frame(annee=intervalle_t))
 
 
 gammas = 2^(-8:3)
