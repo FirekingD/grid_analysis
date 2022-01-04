@@ -31,21 +31,21 @@ plot(iris_paris)
 iris_paris_joined_conso<-merge(iris_paris,conso_elec,by.x="CODE_IRIS",by.y="Code.IRIS",type="full")
 iden<-c("Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.","Consommation.annuelle.totale.de.l.adresse..MWh.","Nombre.de.logements")
 #plot(iris_paris_joined_conso$geometry)
-c2018=filter(iris_paris_joined_conso,Annï¿½e=="2018")
+c2018=filter(iris_paris_joined_conso,Année=="2018")
 c2018$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.= as.numeric(sub(",",".",c2018$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.,fixed=TRUE))
 c2018$Consommation.annuelle.totale.de.l.adresse..MWh.= as.numeric(sub(",",".",c2018$Consommation.annuelle.totale.de.l.adresse..MWh.,fixed=TRUE))
 
 c2018_agr=aggregate(c2018[iden], list(c2018$CODE_IRIS), sum)
 names(c2018_agr)[1] <- "code_iris" ;names(c2018_agr)[2] <- "sum_conso_annuelle_moyenne_iris" ; names(c2018_agr)[3]<-"sum_conso_annuelle_totale_iris";names(c2018_agr)[4]<-"nb_logements_totale_iris"
 
-c2019=filter(iris_paris_joined_conso,Annï¿½e=="2019")
+c2019=filter(iris_paris_joined_conso,Année=="2019")
 c2019$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.= as.numeric(sub(",",".",c2019$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.,fixed=TRUE))
 c2019$Consommation.annuelle.totale.de.l.adresse..MWh.= as.numeric(sub(",",".",c2019$Consommation.annuelle.totale.de.l.adresse..MWh.,fixed=TRUE))
 
 c2019_agr=aggregate(c2019[iden], list(c2019$CODE_IRIS), sum)
 names(c2019_agr)[1] <- "code_iris" ;names(c2019_agr)[2] <- "sum_conso_annuelle_moyenne_iris" ;names(c2019_agr)[3]<-"sum_conso_annuelle_totale_iris"; names(c2019_agr)[4]<-"nb_logements_totale_iris"
 
-c2020=filter(iris_paris_joined_conso,Annï¿½e=="2020")
+c2020=filter(iris_paris_joined_conso,Année=="2020")
 c2020$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.= as.numeric(sub(",",".",c2020$Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.,fixed=TRUE))
 c2020$Consommation.annuelle.totale.de.l.adresse..MWh.= as.numeric(sub(",",".",c2020$Consommation.annuelle.totale.de.l.adresse..MWh.,fixed=TRUE))
 
@@ -61,14 +61,30 @@ variance_de_conso_annuelle_totale_des_iris2018<-var(c2018_agr$sum_conso_annuelle
 variance_de_conso_annuelle_totale_des_iris2019<-var(c2019_agr$sum_conso_annuelle_totale_iris)
 variance_de_conso_annuelle_totale_des_iris2020<-var(c2020_agr$sum_conso_annuelle_totale_iris)
 
-# Analyse bivariï¿½e - Tests de Correlation #
-cor.test(c2018_agr$sum_conso_annuelle_totale_iris,c2018_agr$nb_logements_totale_iris)#, method=c("pearson", "kendall", "spearman"))#
-cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2019_agr$nb_logements_totale_iris)# Conso electrique % nb de logements (qui est proportionnelle au nombre d'habitant)
-cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2020_agr$nb_logements_totale_iris)#
+# Analyse bivariï¿½e - Tests de Correlation PEARSON
+cor.test(c2018_agr$sum_conso_annuelle_totale_iris,c2018_agr$nb_logements_totale_iris,method="pearson")
+
+cor.test(c2018_agr$sum_conso_annuelle_moyenne_iris,c2018_agr$nb_logements_totale_iris,method="pearson")#, method=c("pearson", "kendall", "spearman"))#
+cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2019_agr$nb_logements_totale_iris,method="pearson")# Conso electrique % nb de logements (qui est proportionnelle au nombre d'habitant)
+cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2020_agr$nb_logements_totale_iris,method="pearson")#
+
+# Analyse bivariï¿½e - Tests de Correlation KENDALL
+cor.test(c2018_agr$sum_conso_annuelle_totale_iris,c2018_agr$nb_logements_totale_iris,method="kendall")#, method=c("pearson", "kendall", "spearman"))#
+cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2019_agr$nb_logements_totale_iris,method="kendall")# Conso electrique % nb de logements (qui est proportionnelle au nombre d'habitant)
+cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2020_agr$nb_logements_totale_iris,method="kendall")#
+
+# Analyse bivariï¿½e - Tests de Correlation spearman
+cor.test(c2018_agr$sum_conso_annuelle_totale_iris,c2018_agr$nb_logements_totale_iris,method="spearman")#, method=c("pearson", "kendall", "spearman"))#
+cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2019_agr$nb_logements_totale_iris,method="spearman")# Conso electrique % nb de logements (qui est proportionnelle au nombre d'habitant)
+cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2020_agr$nb_logements_totale_iris,method="spearman")#
 
 # Test de corrï¿½lation de la conso ï¿½lectrique entre deux annï¿½es successives #
-cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2018_agr$sum_conso_annuelle_totale_iris)
-cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2019_agr$sum_conso_annuelle_totale_iris)
+cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2018_agr$sum_conso_annuelle_totale_iris,method="pearson")
+
+cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2018_agr$sum_conso_annuelle_totale_iris,method="kendall")
+
+cor.test(c2019_agr$sum_conso_annuelle_totale_iris,c2018_agr$sum_conso_annuelle_totale_iris,method="spearman")
+#cor.test(c2020_agr$sum_conso_annuelle_totale_iris,c2019_agr$sum_conso_annuelle_totale_iris)
 
 # ... #
 c2018_agr$annee<-rep(2018,nrow(c2018_agr))
@@ -78,10 +94,11 @@ conso_regrouped<-rbind(c2018_agr,c2019_agr,c2020_agr)
 
 # Modelling and prediction # 
 
+ggplot() +labs(title="Consommation électrique totale de Paris en 2018 par iris (MWh)")+
+  geom_sf(data = c2018_agr, aes(fill = sum_conso_annuelle_totale_iris )) +scale_fill_gradient(low="blue", high="red")
 
-ggplot() +
-  geom_sf(data = c2018_agr, aes(fill = sum_conso_annuelle_totale_iris )) 
+
+ggplot() +labs(title="Consommation électrique moyenne de Paris en 2018 par iris (MWh)")+
+  geom_sf(data = c2018_agr, aes(fill = sum_conso_annuelle_moyenne_iris )) +scale_fill_gradient(low="blue", high="red")
 
 
-ggplot() +
-  geom_sf(data = c2018_agr, aes(fill = sum_conso_annuelle_moyenne_iris )) 
