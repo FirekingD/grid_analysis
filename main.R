@@ -2,11 +2,18 @@ library(dplyr)
 library(ggplot2)
 library(ade4)
 library(factoextra)
+
+
+
+#install.packages("ade4")
+#install.packages("factoextra")
 #install.packages("lattice")
 #install.packages("geojsonsf")
 #install.packages("sf")
 #install.packages("readxl")
 #install.packages("xlsx")
+
+#install.packages("GGally")
 #library(xlsx)
 
 library(geojsonsf)
@@ -14,7 +21,7 @@ library(sf)
 library(lattice)
 library(GGally)
 library(readxl)
-setwd("D:/dem/grid_analysis")
+setwd("C:/Users/victo/Desktop/geostat/grid_analysis")
 conso_elec<- read.csv("./data/consommation_annuelle_residentielle_adresse_paris.csv",sep=";")
 prod_elec<- read.csv("./data/production-electrique-par-filiere-a-la-maille-region.csv", sep=";")
 iris_paris<-st_read(dsn="data",layer="iris_paris")
@@ -46,5 +53,12 @@ names(c2020_agr)[1] <- "code_iris" ;names(c2020_agr)[2] <- "sum_conso_annuelle_m
 
 #ggplot()+geom_polygon(data=iris_paris_joined_conso2018,aes(long,lat,fill=Consommation.annuelle.moyenne.par.logement.de.l.adresse..MWh.))
 ggplot() +
-  geom_sf(data = iris_paris_joined_conso2018, aes(fill = )) 
+  geom_sf(data = c2018_agr, aes(fill = nb_logements_totale_iris )) 
 
+
+ggplot() +
+  geom_sf(data = c2018_agr, aes(fill = sum_conso_annuelle_totale_iris )) 
+
+
+ggplot() +
+  geom_sf(data = c2018_agr, aes(fill = sum_conso_annuelle_moyenne_iris )) 
